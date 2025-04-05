@@ -45,29 +45,48 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       ) : (
         <Grid container spacing={1}>
           {messages.map((message, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={2} key={message.id}>
+            <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
               <Paper
-                elevation={1}
+                elevation={2}
                 sx={{
-                  p: 1,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  p: 2,
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
+                  gap: 1,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  overflow: 'hidden',
                   '&:hover': {
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    backgroundColor: 'rgba(25, 118, 210, 0.5)', // 50% transparent primary blue
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
                   },
-                  backgroundColor: expandedMessage === message.id ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&:hover::before': {
+                    opacity: 1,
+                  },
+                  backgroundColor: expandedMessage === index ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
                 }}
-                onClick={() => handleClick(message.id)}
+                onClick={() => handleClick(index)}
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '0.75rem' }}>
                     Message {messages.length - index}
                   </Typography>
                   <IconButton size="small" sx={{ p: 0.5 }}>
-                    {expandedMessage === message.id ? <ExpandLess /> : <ExpandMore />}
+                    {expandedMessage === index ? <ExpandLess /> : <ExpandMore />}
                   </IconButton>
                 </Box>
                 <Box sx={{ 
@@ -97,7 +116,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
                     </Typography>
                   </Box>
                 </Box>
-                <Collapse in={expandedMessage === message.id} timeout="auto" unmountOnExit>
+                <Collapse in={expandedMessage === index} timeout="auto" unmountOnExit>
                   <Paper
                     elevation={0}
                     sx={{
