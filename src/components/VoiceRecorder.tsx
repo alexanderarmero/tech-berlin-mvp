@@ -63,30 +63,32 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
           '&::before': isListening ? {
             content: '""',
             position: 'absolute',
-            width: '100%',
-            height: '100%',
+            width: '90%',
+            height: '90%',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(25,118,210,0.2) 0%, rgba(25,118,210,0) 70%)',
-            animation: 'pulse 2s infinite',
+            background: 'linear-gradient(0deg, #1565c0, #00c853, #00bcd4, #9c27b0, #1565c0)',
+            backgroundSize: '200% 200%',
+            animation: 'gradient 0.8s linear infinite',
+            opacity: 0.15,
           } : {},
           '&::after': isListening ? {
             content: '""',
             position: 'absolute',
-            width: '100%',
-            height: '100%',
+            width: '85%',
+            height: '85%',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(25,118,210,0.1) 0%, rgba(25,118,210,0) 70%)',
-            animation: 'pulse 2s infinite',
-            animationDelay: '1s',
+            background: 'linear-gradient(0deg, #9c27b0, #1565c0, #00c853, #00bcd4, #9c27b0)',
+            backgroundSize: '200% 200%',
+            animation: 'gradient 0.8s linear infinite',
+            animationDelay: '0.4s',
+            opacity: 0.11,
           } : {},
-          '@keyframes pulse': {
+          '@keyframes gradient': {
             '0%': {
-              transform: 'scale(1)',
-              opacity: 1,
+              backgroundPosition: '0% 0%',
             },
             '100%': {
-              transform: 'scale(1.5)',
-              opacity: 0,
+              backgroundPosition: '0% 100%',
             },
           },
         }}
@@ -105,6 +107,19 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
             transform: isListening ? 'scale(1.1)' : 'scale(1)',
             position: 'relative',
             zIndex: 1,
+            ...(isListening && {
+              background: 'linear-gradient(0deg, #1565c0, #00c853, #00bcd4, #9c27b0)',
+              backgroundSize: '100% 200%',
+              animation: 'buttonGradient 0.6s linear infinite',
+              '@keyframes buttonGradient': {
+                '0%': {
+                  backgroundPosition: '0% 0%',
+                },
+                '100%': {
+                  backgroundPosition: '0% 100%',
+                },
+              },
+            }),
           }}
         >
           <MicIcon sx={{ fontSize: 96 }} />
@@ -122,21 +137,22 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
       }}>
         {isListening && <VoiceVisualizer isListening={isListening} />}
 
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2,
-          width: '100%',
-        }}>
-          <Avatar 
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', width: '100%' }}>
+          <Avatar
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-            sx={{ 
-              width: 60, 
+            sx={{
+              width: 60,
               height: 60,
               border: '2px solid',
               borderColor: 'primary.main',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
               backgroundColor: 'white',
+              flexShrink: 0,
+              '& img': {
+                objectFit: 'cover',
+                width: '100%',
+                height: '100%',
+              },
             }}
           />
           <Paper
@@ -148,7 +164,9 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
               backdropFilter: 'blur(8px)',
               minHeight: '60px',
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
+              width: '150%',
+              maxWidth: '900px',
             }}
           >
             <Typography
@@ -160,6 +178,9 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
                 minHeight: '24px',
                 letterSpacing: '0.5px',
                 width: '100%',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
               }}
             >
               {transcript}
