@@ -1,7 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-const words = [
+const GradientText = styled('span')(({ theme }) => ({
+  background: 'linear-gradient(45deg, #9c27b0, #1976d2)',
+  backgroundClip: 'text',
+  WebkitBackgroundClip: 'text',
+  color: 'transparent',
+  display: 'inline-block',
+  animation: 'gradient 3s ease infinite',
+  '@keyframes gradient': {
+    '0%': {
+      backgroundPosition: '0% 50%',
+    },
+    '50%': {
+      backgroundPosition: '100% 50%',
+    },
+    '100%': {
+      backgroundPosition: '0% 50%',
+    },
+  },
+}));
+
+const AnimatedSubtitle: React.FC = () => {
+  const [currentText, setCurrentText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(50);
+
+  const texts = [
     "unlock your full potential with every lesson learned",
     "master challenges by embracing knowledge daily",
     "achieve greatness at your own unique pace",
@@ -10,13 +36,13 @@ const words = [
     "discover the genius waiting inside yourself",
     "turn doubts into strengths through guided growth",
     "elevate your skills beyond all limits",
-    "lLearn smarter, faster, and more effectively",
+    "learn smarter, faster, and more effectively",
     "build confidence with personalized insights",
     "empower yourself to shape a brighter future",
     "find clarity in even the toughest concepts",
     "grow stronger with each new discovery",
     "ignite an unstoppable passion for success",
-    "hhape your destiny one idea at a time",
+    "shape your destiny one idea at a time",
     "conquer fears by trusting your abilities",
     "make progress feel effortless and rewarding",
     "redefine what is possible with determination",
@@ -33,21 +59,17 @@ const words = [
     "believe in yourself; everything else will follow",
     "strive for greatness, through time and space",
     "understand yourself better than anyone else",
-];
+  ];
 
-const AnimatedSubtitle: React.FC = () => {
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentText, setCurrentText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(50);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const currentWord = words[currentWordIndex];
+    const currentWord = texts[currentIndex];
     
     if (isDeleting) {
       if (currentText === '') {
         setIsDeleting(false);
-        setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        setCurrentIndex((prev) => (prev + 1) % texts.length);
         setTypingSpeed(50);
       } else {
         setTimeout(() => {
@@ -66,7 +88,7 @@ const AnimatedSubtitle: React.FC = () => {
         }, typingSpeed);
       }
     }
-  }, [currentText, isDeleting, currentWordIndex, typingSpeed]);
+  }, [currentText, isDeleting, currentIndex, typingSpeed]);
 
   return (
     <Typography
@@ -91,7 +113,7 @@ const AnimatedSubtitle: React.FC = () => {
       }}
     >
       <span style={{ minWidth: '120px', display: 'inline-block', marginRight: '8px' }}>that helps you</span>
-      <span style={{ display: 'inline-block', textOverflow: 'ellipsis' }}>{currentText}</span>
+      <GradientText>{currentText}</GradientText>
     </Typography>
   );
 };
