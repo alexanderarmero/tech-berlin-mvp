@@ -138,23 +138,66 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
         {isListening && <VoiceVisualizer isListening={isListening} />}
 
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', width: '100%' }}>
-          <Avatar
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+          <Box
             sx={{
+              position: 'relative',
               width: 60,
               height: 60,
-              border: '2px solid',
-              borderColor: 'primary.main',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              backgroundColor: 'white',
-              flexShrink: 0,
-              '& img': {
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%',
+              '&::before': isListening ? {
+                content: '""',
+                position: 'absolute',
+                width: '120%',
+                height: '120%',
+                top: '-10%',
+                left: '-10%',
+                borderRadius: '50%',
+                background: 'linear-gradient(0deg, #1565c0, #00c853, #00bcd4, #9c27b0, #1565c0)',
+                backgroundSize: '200% 200%',
+                animation: 'gradient 0.8s linear infinite',
+                opacity: 0.15,
+              } : {},
+              '&::after': isListening ? {
+                content: '""',
+                position: 'absolute',
+                width: '110%',
+                height: '110%',
+                top: '-5%',
+                left: '-5%',
+                borderRadius: '50%',
+                background: 'linear-gradient(0deg, #9c27b0, #1565c0, #00c853, #00bcd4, #9c27b0)',
+                backgroundSize: '200% 200%',
+                animation: 'gradient 0.8s linear infinite',
+                animationDelay: '0.4s',
+                opacity: 0.11,
+              } : {},
+              '@keyframes gradient': {
+                '0%': {
+                  backgroundPosition: '0% 0%',
+                },
+                '100%': {
+                  backgroundPosition: '0% 100%',
+                },
               },
             }}
-          />
+          >
+            <Avatar
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+              sx={{
+                width: 60,
+                height: 60,
+                border: '2px solid',
+                borderColor: 'primary.main',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                backgroundColor: 'white',
+                flexShrink: 0,
+                '& img': {
+                  objectFit: 'cover',
+                  width: '100%',
+                  height: '100%',
+                },
+              }}
+            />
+          </Box>
           <Paper
             elevation={2}
             sx={{
