@@ -10,33 +10,92 @@ import { v4 as uuidv4 } from 'uuid';
 import { teacherAgentApi } from './services/teacherAgentApi';
 
 const theme = createTheme({
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+      letterSpacing: '-0.01em',
+    },
+    h2: {
+      fontWeight: 700,
+      letterSpacing: '-0.01em',
+    },
+    h3: {
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+    },
+    h4: {
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+    },
+    h5: {
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+    },
+    h6: {
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+    },
+    subtitle1: {
+      letterSpacing: '0.01em',
+    },
+    body1: {
+      letterSpacing: '0.01em',
+      lineHeight: 1.7,
+    },
+    body2: {
+      letterSpacing: '0.01em',
+      lineHeight: 1.7,
+    },
+  },
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
+      main: '#2563EB', // More professional blue
+      light: '#60A5FA',
+      dark: '#1D4ED8',
     },
     secondary: {
-      main: '#9c27b0',
-      light: '#ba68c8',
-      dark: '#7b1fa2',
+      main: '#7C3AED', // More professional purple
+      light: '#A78BFA',
+      dark: '#5B21B6',
     },
     background: {
-      default: '#ffffff',
-      paper: '#ffffff',
+      default: '#F8FAFC',
+      paper: '#FFFFFF',
+    },
+    text: {
+      primary: '#1E293B',
+      secondary: '#475569',
     },
   },
   components: {
     MuiPaper: {
       styleOverrides: {
         root: {
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-          borderRadius: '12px',
-          transition: 'all 0.3s ease',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)',
+          borderRadius: '10px',
+          transition: 'all 0.2s ease',
           '&:hover': {
-            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1)',
           },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 500,
+          borderRadius: '8px',
+          padding: '8px 16px',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          color: '#1E293B',
         },
       },
     },
@@ -188,89 +247,112 @@ const App: React.FC = () => {
           position: 'relative', 
           zIndex: 1,
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
           justifyContent: 'flex-start',
           minHeight: '100vh',
           gap: 2,
           pt: 4,
           pb: 8
         }}>
+          {/* Left sidebar - Message List */}
           <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            mb: 2,
-            position: 'relative',
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              bottom: -12,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '120px',
-              height: '4px',
-              background: 'linear-gradient(90deg, #42a5f5, #9c27b0, #42a5f5)',
-              borderRadius: '2px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-            },
+            width: '300px',
+            height: 'calc(100vh - 16px)', 
+            position: 'fixed',
+            top: 8,
+            left: 0,
+            overflowY: 'auto',
+            zIndex: 10,
+            pl: 2
           }}>
-            <Typography 
-              variant="h4" 
-              component="h1" 
-              sx={{ 
-                fontWeight: 'bold',
-                color: 'primary.main',
-                textAlign: 'center',
-                mb: 1,
-                fontSize: '2.4rem',
-              }}
-            >
-              Personal Superhuman Teacher
-            </Typography>
-            
-            <AnimatedSubtitle />
+            <MessageList messages={messages} />
           </Box>
-
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <Typography 
-              variant="h5" 
-              component="h2" 
-              sx={{ 
-                color: 'text.secondary',
-                fontWeight: 'medium',
-                mb: 1,
-              }}
-            >
-              Hello, {userName}!
-            </Typography>
-            {!latestResponse && (
+          
+          {/* Main content area */}
+          <Box sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            gap: 2,
+            ml: '300px', /* Add margin to account for fixed sidebar */
+          }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              mb: 4,
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: -16,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '80px',
+                height: '3px',
+                background: theme.palette.primary.main,
+                borderRadius: '2px',
+                opacity: 0.7,
+              },
+            }}>
               <Typography 
-                variant="subtitle1" 
+                variant="h3" 
+                component="h1" 
                 sx={{ 
-                  color: 'text.secondary',
-                  maxWidth: '800px',
-                  mx: 'auto',
+                  fontWeight: 700,
+                  color: theme.palette.primary.dark,
+                  textAlign: 'center',
+                  mb: 1,
+                  letterSpacing: '-0.02em',
                 }}
               >
-                Share your thoughts and experiences with me. I'm here to help you learn and grow.
+                Personal Learning Assistant
               </Typography>
-            )}
-          </Box>
-
-          {/* Display the latest response with typewriter effect */}
-          {latestResponse && (
-            <Box sx={{ width: '100%', maxWidth: '800px' }}>
-              <TypewriterResponse text={latestResponse} typingSpeed={20} />
+              
+              <AnimatedSubtitle />
             </Box>
-          )}
 
-          <Box sx={{ width: '100%', maxWidth: '600px' }}>
-            <VoiceRecorder onMessageSubmit={handleMessageSubmit} />
-          </Box>
+            <Box sx={{ textAlign: 'center', mb: 3 }}>
+              <Typography 
+                variant="h5" 
+                component="h2" 
+                sx={{ 
+                  color: theme.palette.text.secondary,
+                  fontWeight: 500,
+                  mb: 1,
+                }}
+              >
+                Hello, {userName}!
+              </Typography>
+              {!latestResponse && (
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    color: theme.palette.text.secondary,
+                    maxWidth: '600px',
+                    mx: 'auto',
+                    lineHeight: 1.6,
+                    fontWeight: 400,
+                  }}
+                >
+                  Share your thoughts and experiences with me. I'm here to help you learn and grow.
+                </Typography>
+              )}
+            </Box>
 
-          <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-            <MessageList messages={messages} />
+            {/* Display the latest response with typewriter effect */}
+            {latestResponse && (
+              <Box sx={{ width: '100%', maxWidth: '800px' }}>
+                <TypewriterResponse text={latestResponse} typingSpeed={10} />
+              </Box>
+            )}
+
+            <Box sx={{ width: '100%', maxWidth: '600px' }}>
+              <VoiceRecorder onMessageSubmit={handleMessageSubmit} />
+            </Box>
           </Box>
         </Container>
       </Box>

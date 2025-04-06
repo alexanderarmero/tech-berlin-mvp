@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Typography, Grid, IconButton, Collapse, Avatar } from '@mui/material';
+import { Box, Paper, Typography, IconButton, Collapse, Avatar, Divider } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
@@ -28,147 +28,240 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
 
   return (
     <Paper
-      elevation={2}
+      elevation={1}
       sx={{
         p: 2,
         height: '100%',
         minHeight: '400px',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        maxHeight: 'calc(100vh - 32px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        borderTopRightRadius: '10px',
+        borderBottomRightRadius: '10px',
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
+        boxShadow: '1px 0 10px rgba(0, 0, 0, 0.08)',
       }}
     >
-      <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-        Messages
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          color: 'primary.main', 
+          fontWeight: 600,
+          fontSize: '1.1rem',
+          letterSpacing: '-0.01em',
+          pb: 1.5,
+          borderBottom: '1px solid',
+          borderColor: 'rgba(0, 0, 0, 0.06)',
+          mb: 2
+        }}
+      >
+        Conversation History
       </Typography>
       {messages.length === 0 ? (
-        <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', mt: 2 }}>
-          No messages yet
-        </Typography>
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100%',
+          opacity: 0.7 
+        }}>
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ 
+              textAlign: 'center',
+              fontStyle: 'italic'
+            }}
+          >
+            Your conversation will appear here
+          </Typography>
+        </Box>
       ) : (
-        <Grid container spacing={1}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 1.5,
+          overflowY: 'auto',
+          flex: 1,
+          pr: 1,
+          '&::-webkit-scrollbar': {
+            width: '4px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'rgba(0,0,0,0.02)',
+            borderRadius: '8px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'rgba(37, 99, 235, 0.2)',
+            borderRadius: '8px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: 'rgba(37, 99, 235, 0.3)',
+          },
+        }}>
           {messages.map((message, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
-              <Paper
-                elevation={2}
-                sx={{
-                  p: 2,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.5)', // 50% transparent primary blue
-                    transform: 'translateY(-4px)',
-                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
-                  },
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease',
-                  },
-                  '&:hover::before': {
-                    opacity: 1,
-                  },
-                  backgroundColor: expandedMessage === index ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
-                }}
-                onClick={() => handleClick(index)}
-              >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '0.75rem' }}>
-                    Message {messages.length - index}
-                  </Typography>
-                  <IconButton size="small" sx={{ p: 0.5 }}>
-                    {expandedMessage === index ? <ExpandLess /> : <ExpandMore />}
-                  </IconButton>
-                </Box>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  mb: 1,
-                  gap: 1,
+            <Paper
+              elevation={0}
+              sx={{
+                p: 1.5,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: 'rgba(0, 0, 0, 0.04)',
+                backgroundColor: message.isUser 
+                  ? 'rgba(37, 99, 235, 0.03)' 
+                  : 'rgba(124, 58, 237, 0.03)',
+                '&:hover': {
+                  backgroundColor: message.isUser 
+                    ? 'rgba(37, 99, 235, 0.07)' 
+                    : 'rgba(124, 58, 237, 0.07)',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                },
+              }}
+              onClick={() => handleClick(index)}
+              key={index}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                <Typography variant="subtitle2" sx={{ 
+                  fontWeight: 600, 
+                  fontSize: '0.7rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'text.secondary',
+                  opacity: 0.8
                 }}>
-                  {!message.isUser && (
-                    <Avatar 
-                      src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
-                      sx={{ 
-                        width: 60, 
-                        height: 60,
-                        border: '2px solid',
-                        borderColor: 'secondary.main',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                      }}
-                    />
-                  )}
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                      {message.isUser ? 'You' : 'AI Teacher'}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(message.timestamp)}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Collapse in={expandedMessage === index} timeout="auto" unmountOnExit>
-                  <Paper
-                    elevation={0}
+                  {index === 0 ? 'Latest' : `Message ${messages.length - index}`}
+                </Typography>
+                <IconButton 
+                  size="small" 
+                  sx={{ 
+                    p: 0.3, 
+                    color: 'text.secondary',
+                    opacity: 0.7
+                  }}
+                >
+                  {expandedMessage === index ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+                </IconButton>
+              </Box>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1,
+              }}>
+                {!message.isUser ? (
+                  <Avatar 
+                    src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                    sx={{ 
+                      width: 32, 
+                      height: 32,
+                      border: '1px solid',
+                      borderColor: 'secondary.light',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+                    }}
+                  />
+                ) : (
+                  <Avatar
                     sx={{
-                      mt: 1,
-                      p: 1,
-                      backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                      borderRadius: '4px',
+                      width: 32,
+                      height: 32,
+                      backgroundColor: 'primary.light',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      border: '1px solid',
+                      borderColor: 'primary.main',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
                     }}
                   >
-                    {message.isUser ? (
-                      <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{message.text}</Typography>
-                    ) : (
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => (
-                            <Typography variant="body2" sx={{ fontSize: '0.8rem', mb: 1 }}>{children}</Typography>
-                          ),
-                          h1: ({ children }) => (
-                            <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
-                          ),
-                          h2: ({ children }) => (
-                            <Typography variant="subtitle1" sx={{ fontSize: '0.9rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
-                          ),
-                          h3: ({ children }) => (
-                            <Typography variant="subtitle2" sx={{ fontSize: '0.85rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
-                          ),
-                          ul: ({ children }) => (
-                            <Box component="ul" sx={{ pl: 2, mb: 1 }}>{children}</Box>
-                          ),
-                          ol: ({ children }) => (
-                            <Box component="ol" sx={{ pl: 2, mb: 1 }}>{children}</Box>
-                          ),
-                          li: ({ children }) => (
-                            <Typography component="li" variant="body2" sx={{ fontSize: '0.8rem', mb: 0.5 }}>{children}</Typography>
-                          ),
-                          code: ({ node, inline, children, ...props }) => (
-                            inline 
-                              ? <Typography component="code" sx={{ backgroundColor: 'rgba(0,0,0,0.05)', p: 0.3, borderRadius: 0.5 }} {...props}>{children}</Typography>
-                              : <Paper sx={{ p: 1, backgroundColor: 'rgba(0,0,0,0.03)', mb: 1, overflowX: 'auto' }}><pre style={{ margin: 0 }}><code {...props}>{children}</code></pre></Paper>
-                          ),
-                        }}
-                      >
-                        {message.text}
-                      </ReactMarkdown>
-                    )}
-                  </Paper>
-                </Collapse>
-              </Paper>
-            </Grid>
+                    {message.isUser && 'You'.charAt(0)}
+                  </Avatar>
+                )}
+                <Box>
+                  <Typography variant="subtitle1" sx={{ 
+                    fontWeight: 600, 
+                    fontSize: '0.85rem',
+                    color: message.isUser ? 'primary.dark' : 'secondary.dark',
+                    lineHeight: 1.2
+                  }}>
+                    {message.isUser ? 'You' : 'AI Tutor'}
+                  </Typography>
+                  <Typography variant="caption" sx={{ 
+                    fontSize: '0.7rem',
+                    color: 'text.secondary',
+                    opacity: 0.7
+                  }}>
+                    {formatDate(message.timestamp)}
+                  </Typography>
+                </Box>
+              </Box>
+              <Collapse in={expandedMessage === index} timeout="auto" unmountOnExit>
+                <Divider sx={{ my: 1.5, opacity: 0.6 }} />
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 1.5,
+                    backgroundColor: 'rgba(0, 0, 0, 0.01)',
+                    borderRadius: '6px',
+                  }}
+                >
+                  {message.isUser ? (
+                    <Typography variant="body2" sx={{ 
+                      fontSize: '0.8rem',
+                      color: 'text.primary',
+                      opacity: 0.9,
+                    }}>
+                      {message.text}
+                    </Typography>
+                  ) : (
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => (
+                          <Typography variant="body2" sx={{ fontSize: '0.8rem', mb: 1, lineHeight: 1.6 }}>{children}</Typography>
+                        ),
+                        h1: ({ children }) => (
+                          <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600, mb: 1 }}>{children}</Typography>
+                        ),
+                        h2: ({ children }) => (
+                          <Typography variant="subtitle1" sx={{ fontSize: '0.9rem', fontWeight: 600, mb: 1 }}>{children}</Typography>
+                        ),
+                        h3: ({ children }) => (
+                          <Typography variant="subtitle2" sx={{ fontSize: '0.85rem', fontWeight: 600, mb: 1 }}>{children}</Typography>
+                        ),
+                        ul: ({ children }) => (
+                          <Box component="ul" sx={{ pl: 2, mb: 1 }}>{children}</Box>
+                        ),
+                        ol: ({ children }) => (
+                          <Box component="ol" sx={{ pl: 2, mb: 1 }}>{children}</Box>
+                        ),
+                        li: ({ children }) => (
+                          <Typography component="li" variant="body2" sx={{ fontSize: '0.8rem', mb: 0.5 }}>{children}</Typography>
+                        ),
+                        code: ({ node, inline, children, ...props }) => (
+                          inline 
+                            ? <Typography component="code" sx={{ backgroundColor: 'rgba(0,0,0,0.04)', p: 0.3, borderRadius: 0.5, fontSize: '0.75rem' }} {...props}>{children}</Typography>
+                            : <Paper sx={{ p: 1, backgroundColor: 'rgba(0,0,0,0.02)', mb: 1, overflowX: 'auto', borderRadius: '4px' }}><pre style={{ margin: 0, fontSize: '0.75rem' }}><code {...props}>{children}</code></pre></Paper>
+                        ),
+                      }}
+                    >
+                      {message.text}
+                    </ReactMarkdown>
+                  )}
+                </Paper>
+              </Collapse>
+            </Paper>
           ))}
-        </Grid>
+        </Box>
       )}
     </Paper>
   );

@@ -62,7 +62,7 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({ isListening }) => {
           ctx.clearRect(0, 0, width, height);
 
           // Draw center line
-          ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(centerX, 0);
@@ -75,7 +75,7 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({ isListening }) => {
             const barHeight = (dataArrayRef.current[i] / 255) * maxBarHeight;
             
             // Left side bars
-            ctx.fillStyle = 'rgba(25, 118, 210, 0.6)';
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.5)';
             ctx.fillRect(
               centerX - (i + 1) * (barWidth + gap),
               height / 2 - barHeight / 2,
@@ -84,7 +84,7 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({ isListening }) => {
             );
 
             // Right side bars
-            ctx.fillStyle = 'rgba(156, 39, 176, 0.6)';
+            ctx.fillStyle = 'rgba(124, 58, 237, 0.5)';
             ctx.fillRect(
               centerX + i * (barWidth + gap),
               height / 2 - barHeight / 2,
@@ -118,20 +118,17 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({ isListening }) => {
       sx={{
         position: 'relative',
         width: '100%',
-        maxWidth: '600px',
-        height: '100px',
-        mx: 'auto',
-        mb: 4,
-        mt: 2,
+        maxWidth: '400px',
+        height: '50px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         '& canvas': {
           width: '100%',
           height: '100%',
-          borderRadius: '8px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '6px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(8px)',
           border: '1px solid rgba(0, 0, 0, 0.05)',
         },
