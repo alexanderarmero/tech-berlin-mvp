@@ -10,7 +10,7 @@ interface TypewriterResponseProps {
 
 const TypewriterResponse: React.FC<TypewriterResponseProps> = ({ 
   text, 
-  typingSpeed = 30 
+  typingSpeed = 55 
 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);

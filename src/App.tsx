@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme, CssBaseline, Container, Typography, Box } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Container, Typography, Box, Paper } from '@mui/material';
 import MessageList from './components/MessageList';
+import LearningJourney from './components/LearningJourney';
 import VoiceRecorder from './components/VoiceRecorder';
 import BackgroundPatterns from './components/BackgroundPatterns';
 import AnimatedSubtitle from './components/AnimatedSubtitle';
 import TypewriterResponse from './components/TypewriterResponse';
+import LoadingIndicator from './components/LoadingIndicator';
 import { Message } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { teacherAgentApi } from './services/teacherAgentApi';
@@ -108,6 +110,7 @@ const App: React.FC = () => {
   const [sessionId, setSessionId] = useState<string>('');
   const [apiLoading, setApiLoading] = useState<boolean>(false);
   const [latestResponse, setLatestResponse] = useState<string>('');
+  const [learningPlanSteps, setLearningPlanSteps] = useState<string[]>([]);
 
   useEffect(() => {
     // Initialize session ID or get from localStorage
@@ -178,6 +181,12 @@ const App: React.FC = () => {
         // Set the latest response for the typewriter effect
         setLatestResponse(response.reply);
         
+        // Check if learning plan steps are available
+        if (response.learning_plan_steps && response.learning_plan_steps.length > 0) {
+          console.log('Learning plan steps detected:', response.learning_plan_steps);
+          setLearningPlanSteps(response.learning_plan_steps);
+        }
+        
         // Create teacher response message
         const teacherMessage: Message = {
           id: Date.now() + 1,
@@ -242,6 +251,8 @@ const App: React.FC = () => {
           },
         }}
       >
+        <BackgroundPatterns />
+        
         <Container maxWidth="lg" sx={{ 
           py: 4, 
           position: 'relative', 
@@ -255,7 +266,7 @@ const App: React.FC = () => {
           pt: 4,
           pb: 8
         }}>
-          {/* Left sidebar - Message List */}
+          {/* Left sidebar - Message List or Learning Journey */}
           <Box sx={{ 
             width: '300px',
             height: 'calc(100vh - 16px)', 
@@ -266,7 +277,11 @@ const App: React.FC = () => {
             zIndex: 10,
             pl: 2
           }}>
-            <MessageList messages={messages} />
+            {learningPlanSteps.length > 0 ? (
+              <LearningJourney steps={learningPlanSteps} />
+            ) : (
+              <MessageList messages={messages} />
+            )}
           </Box>
           
           {/* Main content area */}
@@ -309,7 +324,7 @@ const App: React.FC = () => {
                   letterSpacing: '-0.02em',
                 }}
               >
-                Personal Learning Assistant
+                {learningPlanSteps.length > 0 ? 'Learning Journey' : 'Personal Learning Assistant'}
               </Typography>
               
               <AnimatedSubtitle />
@@ -343,8 +358,41 @@ const App: React.FC = () => {
               )}
             </Box>
 
-            {/* Display the latest response with typewriter effect */}
-            {latestResponse && (
+            {/* Display the latest response with typewriter effect or loading state */}
+            {apiLoading ? (
+              <Box sx={{ width: '100%', maxWidth: '800px' }}>
+                <Paper
+                  elevation={1}
+                  sx={{
+                    p: 3,
+                    my: 3,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '10px',
+                    minHeight: '100px',
+                    width: '100%',
+                    border: '1px solid rgba(37, 99, 235, 0.1)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.2s ease',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    opacity: 0.5,
+                  }}
+                >
+                  <Box 
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '4px',
+                      background: 'linear-gradient(to right, #2563EB, #7C3AED)',
+                      opacity: 0.8,
+                    }}
+                  />
+                  <LoadingIndicator />
+                </Paper>
+              </Box>
+            ) : latestResponse && (
               <Box sx={{ width: '100%', maxWidth: '800px' }}>
                 <TypewriterResponse text={latestResponse} typingSpeed={10} />
               </Box>

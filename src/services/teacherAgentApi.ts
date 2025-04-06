@@ -9,7 +9,8 @@ interface TeacherAgentRequest {
 export interface TeacherAgentResponse {
   reply: string;
   session_id: string;
-  current_stage: 'onboarding' | 'pedagogy' | 'journey_crafting' | 'complete' | 'error';
+  current_stage: 'onboarding' | 'pedagogy' | 'journey_crafting' | 'teaching' | 'complete' | 'error';
+  learning_plan_steps?: string[];
 }
 
 // Service to interact with the Teacher Agents API
