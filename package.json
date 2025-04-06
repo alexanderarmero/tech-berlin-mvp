@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "AI-powered learning companion that builds personalized relationships with students",
   "main": "index.js",
+  "proxy": "http://localhost:8000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -22,7 +23,10 @@
     "@mui/icons-material": "^5.11.16",
     "axios": "^1.4.0",
     "react-speech-recognition": "^3.10.0",
-    "date-fns": "^2.30.0"
+    "date-fns": "^2.30.0",
+    "react-markdown": "^8.0.7",
+    "uuid": "^9.0.0",
+    "@types/uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Paper, Typography, Grid, IconButton, Collapse, Avatar } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import ReactMarkdown from 'react-markdown';
 import { Message } from '../types';
 
 interface MessageListProps {
@@ -126,7 +127,42 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
                       borderRadius: '4px',
                     }}
                   >
-                    <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{message.text}</Typography>
+                    {message.isUser ? (
+                      <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{message.text}</Typography>
+                    ) : (
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => (
+                            <Typography variant="body2" sx={{ fontSize: '0.8rem', mb: 1 }}>{children}</Typography>
+                          ),
+                          h1: ({ children }) => (
+                            <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
+                          ),
+                          h2: ({ children }) => (
+                            <Typography variant="subtitle1" sx={{ fontSize: '0.9rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
+                          ),
+                          h3: ({ children }) => (
+                            <Typography variant="subtitle2" sx={{ fontSize: '0.85rem', fontWeight: 'bold', mb: 1 }}>{children}</Typography>
+                          ),
+                          ul: ({ children }) => (
+                            <Box component="ul" sx={{ pl: 2, mb: 1 }}>{children}</Box>
+                          ),
+                          ol: ({ children }) => (
+                            <Box component="ol" sx={{ pl: 2, mb: 1 }}>{children}</Box>
+                          ),
+                          li: ({ children }) => (
+                            <Typography component="li" variant="body2" sx={{ fontSize: '0.8rem', mb: 0.5 }}>{children}</Typography>
+                          ),
+                          code: ({ node, inline, children, ...props }) => (
+                            inline 
+                              ? <Typography component="code" sx={{ backgroundColor: 'rgba(0,0,0,0.05)', p: 0.3, borderRadius: 0.5 }} {...props}>{children}</Typography>
+                              : <Paper sx={{ p: 1, backgroundColor: 'rgba(0,0,0,0.03)', mb: 1, overflowX: 'auto' }}><pre style={{ margin: 0 }}><code {...props}>{children}</code></pre></Paper>
+                          ),
+                        }}
+                      >
+                        {message.text}
+                      </ReactMarkdown>
+                    )}
                   </Paper>
                 </Collapse>
               </Paper>

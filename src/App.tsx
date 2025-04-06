@@ -4,7 +4,10 @@ import MessageList from './components/MessageList';
 import VoiceRecorder from './components/VoiceRecorder';
 import BackgroundPatterns from './components/BackgroundPatterns';
 import AnimatedSubtitle from './components/AnimatedSubtitle';
+import TypewriterResponse from './components/TypewriterResponse';
 import { Message } from './types';
+import { v4 as uuidv4 } from 'uuid';
+import { teacherAgentApi } from './services/teacherAgentApi';
 
 const theme = createTheme({
   palette: {
@@ -43,6 +46,35 @@ const theme = createTheme({
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userName, setUserName] = useState<string>('there');
+  const [sessionId, setSessionId] = useState<string>('');
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [latestResponse, setLatestResponse] = useState<string>('');
+
+  useEffect(() => {
+    // Initialize session ID or get from localStorage
+    const storedSessionId = localStorage.getItem('teacherAgentSessionId');
+    if (storedSessionId) {
+      console.log('Using existing session ID:', storedSessionId);
+      setSessionId(storedSessionId);
+    } else {
+      const newSessionId = uuidv4();
+      console.log('Created new session ID:', newSessionId);
+      localStorage.setItem('teacherAgentSessionId', newSessionId);
+      setSessionId(newSessionId);
+    }
+
+    // Check API health on mount
+    const checkApiHealth = async () => {
+      try {
+        const healthResult = await teacherAgentApi.checkHealth();
+        console.log('Teacher Agent API health check result:', healthResult);
+      } catch (error) {
+        console.error('Teacher Agent API is not available:', error);
+      }
+    };
+    
+    checkApiHealth();
+  }, []);
 
   useEffect(() => {
     // Extract name from messages
@@ -61,14 +93,64 @@ const App: React.FC = () => {
     extractName();
   }, [messages]);
 
-  const handleMessageSubmit = (text: string) => {
-    const newMessage: Message = {
+  const handleMessageSubmit = async (text: string) => {
+    console.log('Message submitted:', text);
+    console.log('Current session ID:', sessionId);
+    
+    // Create user message
+    const userMessage: Message = {
       id: Date.now(),
       text,
       timestamp: new Date(),
       isUser: true
     };
-    setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    
+    setMessages((prevMessages) => [userMessage, ...prevMessages]);
+    
+    // Call the Teacher Agents API if we have a session ID
+    if (sessionId) {
+      setApiLoading(true);
+      console.log('Sending message to Teacher Agent API...');
+      
+      try {
+        const response = await teacherAgentApi.sendMessage(sessionId, text);
+        console.log('Received response from Teacher Agent API:', response);
+        
+        // Set the latest response for the typewriter effect
+        setLatestResponse(response.reply);
+        
+        // Create teacher response message
+        const teacherMessage: Message = {
+          id: Date.now() + 1,
+          text: response.reply,
+          timestamp: new Date(),
+          isUser: false
+        };
+        
+        setMessages((prevMessages) => [teacherMessage, ...prevMessages]);
+      } catch (error) {
+        console.error('Error getting response from Teacher Agent:', error);
+        
+        const errorText = "I'm sorry, I'm having trouble connecting to my knowledge base. Please try again in a moment.";
+        
+        // Set the error message for the typewriter effect
+        setLatestResponse(errorText);
+        
+        // Create error message
+        const errorMessage: Message = {
+          id: Date.now() + 1,
+          text: errorText,
+          timestamp: new Date(),
+          isUser: false
+        };
+        
+        setMessages((prevMessages) => [errorMessage, ...prevMessages]);
+      } finally {
+        setApiLoading(false);
+      }
+    } else {
+      console.error('No session ID available for API call');
+    }
   };
 
   return (
@@ -108,15 +190,17 @@ const App: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
           minHeight: '100vh',
-          gap: 4
+          gap: 2,
+          pt: 4,
+          pb: 8
         }}>
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            mb: 4,
+            mb: 2,
             position: 'relative',
             '&::after': {
               content: '""',
@@ -148,7 +232,7 @@ const App: React.FC = () => {
             <AnimatedSubtitle />
           </Box>
 
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
             <Typography 
               variant="h5" 
               component="h2" 
@@ -160,20 +244,31 @@ const App: React.FC = () => {
             >
               Hello, {userName}!
             </Typography>
-            <Typography 
-              variant="subtitle1" 
-              sx={{ 
-                color: 'text.secondary',
-                maxWidth: '800px',
-                mx: 'auto',
-              }}
-            >
-              Share your thoughts and experiences with me. I'm here to help you learn and grow.
-            </Typography>
+            {!latestResponse && (
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  color: 'text.secondary',
+                  maxWidth: '800px',
+                  mx: 'auto',
+                }}
+              >
+                Share your thoughts and experiences with me. I'm here to help you learn and grow.
+              </Typography>
+            )}
           </Box>
+
+          {/* Display the latest response with typewriter effect */}
+          {latestResponse && (
+            <Box sx={{ width: '100%', maxWidth: '800px' }}>
+              <TypewriterResponse text={latestResponse} typingSpeed={20} />
+            </Box>
+          )}
+
           <Box sx={{ width: '100%', maxWidth: '600px' }}>
             <VoiceRecorder onMessageSubmit={handleMessageSubmit} />
           </Box>
+
           <Box sx={{ width: '100%', maxWidth: '1200px' }}>
             <MessageList messages={messages} />
           </Box>

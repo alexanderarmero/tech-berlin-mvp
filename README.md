@@ -172,4 +172,38 @@ With **Personal Superhuman Teacher**, every student has access to a **superhuman
 
 ---
 
+## Teacher Agents API Integration
+
+This application integrates with the Teacher Agents API to provide educational planning and guidance through conversational AI. When users speak into the application, their voice is transcribed and sent to the API, which responds with personalized educational content.
+
+### Key Features
+
+- **Session-based Memory**: The application maintains a unique session ID for each user, stored in localStorage, to maintain conversation context across interactions.
+- **Markdown Rendering**: API responses use Markdown formatting which is rendered appropriately in the user interface.
+- **Multi-stage Conversation Flow**: The API follows a progression through onboarding, pedagogy, journey crafting, and completion stages.
+
+### API Endpoints Used
+
+- `/chat`: Sends transcribed voice messages and receives structured educational responses
+- `/health`: Verifies API availability on startup
+
+### How It Works
+
+1. When the application starts, it generates a session ID or retrieves an existing one from localStorage
+2. A health check is performed to verify API availability
+3. When the user records a voice message:
+   - The message is transcribed using browser speech recognition
+   - The transcribed text is sent to the API along with the session ID
+   - The API response is displayed in the message list with proper Markdown formatting
+
+### Configuration
+
+The API is configured to connect to `http://localhost:8000` by default. To run the application:
+
+1. Ensure the Teacher Agents API is running on port 8000
+2. Install dependencies with `npm install`
+3. Start the application with `npm start`
+
+---
+
 Let me know if you’d like any further adjustments or enhancements!
