@@ -11,6 +11,7 @@ export interface TeacherAgentResponse {
   session_id: string;
   current_stage: 'onboarding' | 'pedagogy' | 'journey_crafting' | 'teaching' | 'complete' | 'error';
   learning_plan_steps?: string[];
+  current_step_index?: number;
 }
 
 // Service to interact with the Teacher Agents API

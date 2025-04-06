@@ -111,6 +111,7 @@ const App: React.FC = () => {
   const [apiLoading, setApiLoading] = useState<boolean>(false);
   const [latestResponse, setLatestResponse] = useState<string>('');
   const [learningPlanSteps, setLearningPlanSteps] = useState<string[]>([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
   useEffect(() => {
     // Initialize session ID or get from localStorage
@@ -185,6 +186,12 @@ const App: React.FC = () => {
         if (response.learning_plan_steps && response.learning_plan_steps.length > 0) {
           console.log('Learning plan steps detected:', response.learning_plan_steps);
           setLearningPlanSteps(response.learning_plan_steps);
+          
+          // Update current step index if provided
+          if (response.current_step_index !== undefined) {
+            console.log('Current step index:', response.current_step_index);
+            setCurrentStepIndex(response.current_step_index);
+          }
         }
         
         // Create teacher response message
@@ -268,7 +275,7 @@ const App: React.FC = () => {
         }}>
           {/* Left sidebar - Message List or Learning Journey */}
           <Box sx={{ 
-            width: '300px',
+            width: learningPlanSteps.length > 0 ? '330px' : '300px',
             height: 'calc(100vh - 16px)', 
             position: 'fixed',
             top: 8,
@@ -278,7 +285,10 @@ const App: React.FC = () => {
             pl: 2
           }}>
             {learningPlanSteps.length > 0 ? (
-              <LearningJourney steps={learningPlanSteps} />
+              <LearningJourney 
+                steps={learningPlanSteps} 
+                current_step_index={currentStepIndex} 
+              />
             ) : (
               <MessageList messages={messages} />
             )}
