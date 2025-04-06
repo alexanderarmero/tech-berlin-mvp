@@ -1,10 +1,8 @@
 import React from 'react';
 import { Box, Fab, Paper, Typography, Avatar } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
-import PersonIcon from '@mui/icons-material/Person';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import VoiceVisualizer from './VoiceVisualizer';
-import TeacherResponse from './TeacherResponse';
 
 interface VoiceRecorderProps {
   onMessageSubmit: (text: string) => void;
@@ -12,7 +10,6 @@ interface VoiceRecorderProps {
 
 const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
   const [isListening, setIsListening] = React.useState(false);
-  const [teacherResponse, setTeacherResponse] = React.useState('');
   
   const {
     transcript,
@@ -31,8 +28,6 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
     SpeechRecognition.stopListening();
     if (transcript.trim()) {
       onMessageSubmit(transcript);
-      // Simulate teacher's response (replace this with actual AI response)
-      setTeacherResponse(`Thank you for sharing your thoughts. I understand that you said: "${transcript}". Let me help you analyze and reflect on this.`);
       resetTranscript();
     }
   };
@@ -231,8 +226,6 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onMessageSubmit }) => {
           </Paper>
         </Box>
       </Box>
-
-      {teacherResponse && <TeacherResponse response={teacherResponse} />}
     </Box>
   );
 };
